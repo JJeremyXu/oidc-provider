@@ -125,9 +125,6 @@ class MongoAdapter {
     }else{
       return undefined;
     }
-    // console.log(result);
-    // if (!result) return undefined;
-    // return result;
   }
 
   static async connect() {

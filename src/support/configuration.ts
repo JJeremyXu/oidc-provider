@@ -1,5 +1,12 @@
 import { Configuration } from "oidc-provider";
 import MongoAdapter from "../adapters/mongodb";
+import { Collection, Db, MongoClient, ObjectId } from 'mongodb';
+import e from "express";
+
+type User = {
+  sub: string,
+  [x: string]: string;
+}
 
 export const configuration : Configuration = {
     adapter: MongoAdapter,
@@ -14,11 +21,13 @@ export const configuration : Configuration = {
           "https://jwt.io",
           "https://openidconnect.net/callback",
           "https://oauth.pstmn.io/v1/callback",
-          "https://oauthdebugger.com/debug"
+          "https://oauthdebugger.com/debug",
+          "https://oidcdebugger.com/debug"
         ], // using jwt.io as redirect_uri to show the ID Token contents
         // response_types: ["id_token", "code", "code id_token"],
         // grant_types: ["implicit", "authorization_code", "refresh_token"],
         grant_types: ["authorization_code", "refresh_token"],
+        response_types: ['code'],
         scope: "openid email profile phone address offline_access",
         application_type: "web",
       },
@@ -166,9 +175,21 @@ export const configuration : Configuration = {
       console.log("findAccount => ", id);
       return {
         accountId: id,
-        async claims(use, scope) {
+        async claims(use, scopes) {
+          console.log('scope123',scopes);
             //define what we want others use access_token to get our resourse.
-          return { sub: id, scope };
+          const user = await MongoAdapter.coll('users').findOne({_id: new ObjectId(id)});
+          const data : User = {
+            sub: id,
+
+          }
+          scopes.split(' ').forEach(scope => { 
+            data[scope] = user![scope];
+          })
+          console.log(scopes.split(" "));
+          console.log(data);
+          // return { sub: id, email: data!.email||"NO EMAIL PROVI DED"};
+          return data;
         },
       };
     },
