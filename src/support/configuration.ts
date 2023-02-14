@@ -5,7 +5,7 @@ import e from "express";
 
 type User = {
   sub: string,
-  [x: string]: string;
+  [x: string]: string
 }
 
 export const configuration : Configuration = {
@@ -176,12 +176,10 @@ export const configuration : Configuration = {
       return {
         accountId: id,
         async claims(use, scopes) {
-          console.log('scope123',scopes);
             //define what we want others use access_token to get our resourse.
           const user = await MongoAdapter.coll('users').findOne({_id: new ObjectId(id)});
           const data : User = {
             sub: id,
-
           }
           scopes.split(' ').forEach(scope => { 
             data[scope] = user![scope];

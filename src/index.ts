@@ -10,11 +10,11 @@ import { configuration } from "./support/configuration";
 const app: Express = express();
 const parse = bodyParser.urlencoded({ extended: false });
 MongoAdapter.connect();
-const oidc = new Provider("http://localhost:3000", configuration);
+const oidc = new Provider("http://localhost:8000", configuration);
 
-//http://localhost:3000/auth?client_id=foo&response_type=code&redirect_uri=https%3A%2F%2Fjwt.io&scope=openid%20email&nonce=foobar&prompt=login
-// http://localhost:3000/auth?response_type=id_token&client_id=foo&redirect_uri=https%3A%2F%2Fjwt.io&nonce=test&scope=openid
-// http://localhost:3000/auth?response_type=id_token&client_id=foa&redirect_uri=https%3A%2F%2Fjwt.io&nonce=test&scope=openid
+//http://localhost:8000/auth?client_id=foo&response_type=code&redirect_uri=https%3A%2F%2Fjwt.io&scope=openid%20email%20profile&nonce=foobar&prompt=login
+// http://localhost:8000/auth?response_type=id_token&client_id=foo&redirect_uri=https%3A%2F%2Fjwt.io&nonce=test&scope=openid
+// http://localhost:8000/auth?response_type=id_token&client_id=foa&redirect_uri=https%3A%2F%2Fjwt.io&nonce=test&scope=openid
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve(__dirname, "views"));
@@ -189,8 +189,8 @@ app.get("/interaction/:uid/abort", setNoCache, async (req, res, next) => {
 
 app.use(oidc.callback());
 
-app.listen("3000", () => {
+app.listen(process.env.PORT || 8000, () => {
   console.log(
-    "oidc-provider listening on port 3000, check http://localhost:3000/.well-known/openid-configuration"
+    "oidc-provider listening on port process.env.PORT, check http://localhost:8000/.well-known/openid-configuration"
   );
 });
