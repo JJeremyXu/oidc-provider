@@ -13,7 +13,9 @@ MongoAdapter.connect();
 const oidc = new Provider("http://localhost:8000", configuration);
 
 //http://localhost:8000/auth?client_id=foo&response_type=code&redirect_uri=https%3A%2F%2Fjwt.io&scope=openid%20email%20profile&nonce=foobar&prompt=login
-// http://localhost:8000/auth?response_type=id_token&client_id=foo&redirect_uri=https%3A%2F%2Fjwt.io&nonce=test&scope=openid
+// http://localhost:8000/auth?response_type=code%20id_token&client_id=foo&redirect_uri=https%3A%2F%2Fjwt.io&nonce=test&scope=openid
+// http://localhost:8000/auth?response_type=code%20id_token&client_id=foo&redirect_uri=https%3A%2F%2Fjwt.io&nonce=test&scope=openid%20email%20profile
+// http://localhost:8000/auth?response_type=id_token&client_id=foo&redirect_uri=https%3A%2F%2Fjwt.io&nonce=test&scope=openid%20email%20profile
 // http://localhost:8000/auth?response_type=id_token&client_id=foa&redirect_uri=https%3A%2F%2Fjwt.io&nonce=test&scope=openid
 
 app.set("view engine", "ejs");

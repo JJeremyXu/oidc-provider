@@ -1,9 +1,13 @@
 import { Provider } from 'oidc-provider';
 import { nanoid } from 'nanoid';
-
+import MongoAdapter from "../adapters/mongodb";
+import { ObjectId } from 'mongodb';
 const store = new Map();
 const logins = new Map();
-
+type User = {
+  sub: string,
+  [x: string]: string
+}
 export class Account {
   private accountId;
   constructor(id: any, private profile: any = {}) {
@@ -80,12 +84,34 @@ export class Account {
     return logins.get(login);
   }
 
-  static async findAccount(ctx: any, id: any, token: any) { // eslint-disable-line no-unused-vars
-    // token is a reference to the token used for which a given account is being loaded,
-    //   it is undefined in scenarios where account claims are returned from authorization endpoint
-    // ctx is the koa request context
-    if (!store.get(id)) new Account(id); // eslint-disable-line no-new
-    return store.get(id);
+  // static async findAccount(ctx: any, id: any, token: any) { // eslint-disable-line no-unused-vars
+  //   // token is a reference to the token used for which a given account is being loaded,
+  //   //   it is undefined in scenarios where account claims are returned from authorization endpoint
+  //   // ctx is the koa request context
+  //   if (!store.get(id)) new Account(id); // eslint-disable-line no-new
+  //   return store.get(id);
+  // }
+
+  static async findAccount(ctx: any, id: string, token: any) {
+    console.log("token", token);
+    console.log("findAccount => ", id);
+    return {
+      accountId: id,
+      async claims(use: any, scopes: string) {
+          //define what we want others use access_token to get our resourse.
+        const user = await MongoAdapter.coll('users').findOne({_id: new ObjectId(id)});
+        const data : User = {
+          sub: id,
+        }
+        scopes.split(' ').forEach(scope => { 
+          data[scope] = user![scope];
+        })
+        console.log(scopes.split(" "));
+        console.log(data);
+        // return { sub: id, email: data!.email||"NO EMAIL PROVI DED"};
+        return data;
+      },
+    };
   }
 }
 

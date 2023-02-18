@@ -22,18 +22,22 @@ export const configuration : Configuration = {
           "https://openidconnect.net/callback",
           "https://oauth.pstmn.io/v1/callback",
           "https://oauthdebugger.com/debug",
-          "https://oidcdebugger.com/debug"
+          "https://oidcdebugger.com/debug",
+          "http://localhost:3000/api/auth/callback/orosound"
         ], // using jwt.io as redirect_uri to show the ID Token contents
+        // response_types: ['code id_token'],
+        // grant_types: ['authorization_code', 'implicit'],
         // response_types: ["id_token", "code", "code id_token"],
         // grant_types: ["implicit", "authorization_code", "refresh_token"],
         grant_types: ["authorization_code", "refresh_token"],
         response_types: ['code'],
         scope: "openid email profile phone address offline_access",
+        // scope: "openid email profile address",
         application_type: "web",
       },
     ],
 
-    //Openid Standard Claims: https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+    // Openid Standard Claims: https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
     claims: {
       address: ["address"],
       email: ["email", "email_verified"],
@@ -55,6 +59,9 @@ export const configuration : Configuration = {
         "zoneinfo",
       ],
     },
+
+    // Openid Standard Claims: https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+
     cookies: {
       keys: "SuperSecret".split(","),
     },
@@ -176,6 +183,8 @@ export const configuration : Configuration = {
       return {
         accountId: id,
         async claims(use, scopes) {
+
+          console.log("use",use);
             //define what we want others use access_token to get our resourse.
           const user = await MongoAdapter.coll('users').findOne({_id: new ObjectId(id)});
           const data : User = {
